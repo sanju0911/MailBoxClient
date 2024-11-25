@@ -26,8 +26,13 @@ const ViewMail = () => {
         },
       });
 
-      setEmails(response.data);
-      setUnreadCount(response.data.filter((email) => !email.read).length);
+      const fetchedEmails = response.data;
+
+      // Update only if there are new emails
+      if (fetchedEmails.length !== emails.length) {
+        setEmails(fetchedEmails);
+        setUnreadCount(fetchedEmails.filter((email) => !email.read).length);
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch mails.");
     }
@@ -35,7 +40,14 @@ const ViewMail = () => {
 
   useEffect(() => {
     fetchMails();
-  }, []);
+
+    // Set up polling every 2 seconds
+    const interval = setInterval(() => {
+      fetchMails();
+    }, 2000);
+
+    return () => clearInterval(interval); // Clean up the interval on component unmount
+  }, [emails]);
 
   const toggleEmailBody = async (emailId) => {
     if (selectedEmail === emailId) {
