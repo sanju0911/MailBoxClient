@@ -10,7 +10,6 @@ const SentBox = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
-  // Fetch sent mails instead of received mails
   const fetchSentMails = async () => {
     try {
       const token = localStorage.getItem("authToken");
