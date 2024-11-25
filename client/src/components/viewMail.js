@@ -35,7 +35,7 @@ const ViewMail = () => {
 
   useEffect(() => {
     fetchMails();
-  });
+  }, []);
 
   const toggleEmailBody = async (emailId) => {
     if (selectedEmail === emailId) {
@@ -58,6 +58,24 @@ const ViewMail = () => {
       } catch (err) {
         console.error("Error marking email as read", err);
       }
+    }
+  };
+
+  const handleDeleteEmail = async (emailId) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`http://localhost:5000/api/deleteEmail/${emailId}`, {
+        headers: {
+          "x-auth-token": token,
+        },
+      });
+
+      setEmails((prevEmails) =>
+        prevEmails.filter((email) => email._id !== emailId)
+      );
+    } catch (err) {
+      setError("Failed to delete email.");
+      console.error("Error deleting email:", err);
     }
   };
 
@@ -91,7 +109,7 @@ const ViewMail = () => {
               >
                 {email.read ? null : (
                   <span style={{ color: "blue", marginRight: "10px" }}>•</span>
-                )}{" "}
+                )}
                 <h5>{email.subject}</h5>
                 <p>
                   <strong>From:</strong> {email.from}
@@ -101,6 +119,14 @@ const ViewMail = () => {
                     <strong>Body:</strong> {email.body}
                   </p>
                 )}
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleDeleteEmail(email._id)}
+                  style={{ float: "right" }}
+                >
+                  Delete
+                </Button>
               </ListGroup.Item>
             ))}
           </ListGroup>

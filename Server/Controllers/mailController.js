@@ -64,8 +64,27 @@ const markAsRead = async (req, res) => {
   }
 };
 
+const deleteEmail = async (req, res) => {
+  try {
+    const { emailId } = req.params;
+
+    
+    const deletedEmail = await Email.findByIdAndDelete(emailId);
+
+    if (!deletedEmail) {
+      return res.status(404).json({ message: "Email not found." });
+    }
+
+    return res.status(200).json({ message: "Email deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting email:", error);
+    return res.status(500).json({ message: "Failed to delete email." });
+  }
+};
+
 module.exports = {
   sendMail,
   viewMail,
   markAsRead,
+  deleteEmail,
 };
