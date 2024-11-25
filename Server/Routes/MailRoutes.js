@@ -6,6 +6,7 @@ const {
   viewMail,
   markAsRead,
   deleteEmail,
+  getSentMails,
 } = require("../Controllers/mailController");
 const authenticate = require("../Auth/Auth");
 
@@ -16,4 +17,5 @@ router.get("/getmail", authenticate, viewMail);
 router.put("/markAsRead/:emailId", authenticate, markAsRead);
 router.delete("/deleteEmail/:emailId", deleteEmail);
 
+router.get("/getSentMail", authenticate, getSentMails);
 module.exports = router;
