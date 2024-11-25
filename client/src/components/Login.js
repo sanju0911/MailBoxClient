@@ -28,10 +28,16 @@ const Login = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/user/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/user/login",
+        {
+          email,
+          password,
+        }
+      );
+      const token = response.data.token;
+
+      localStorage.setItem("authToken", token);
       setSuccess("User has successfully logged in.");
       navigate("/Home");
     } catch (err) {

@@ -18,6 +18,7 @@ mongoose
   });
 
 app.use("/api/user", require("./Routes/UserRoutes"));
+app.use("/api", require("./Routes/MailRoutes"));
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
