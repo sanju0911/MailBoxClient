@@ -4,6 +4,7 @@ import Signup from "./components/SignUp";
 import Login from "./components/Login";
 import NavBar from "./components/NavBar";
 import Home from "./components/Home";
+import ViewMail from "./components/viewMail";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Home" element={<Home />} />
+        <Route path="/mail" element={<ViewMail />} />
       </Routes>
     </Router>
   );

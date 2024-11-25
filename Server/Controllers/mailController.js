@@ -30,6 +30,20 @@ const sendMail = async (req, res) => {
   }
 };
 
+const viewMail = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+
+    const emails = await Email.find({ to: userEmail });
+
+    return res.status(200).json(emails);
+  } catch (error) {
+    console.error("Error fetching emails:", error);
+    return res.status(500).json({ message: "Failed to fetch mails." });
+  }
+};
+
 module.exports = {
   sendMail,
+  viewMail,
 };
