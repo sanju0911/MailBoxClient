@@ -7,6 +7,7 @@ const ViewMail = () => {
   const [emails, setEmails] = useState([]);
   const [error, setError] = useState("");
   const [selectedEmail, setSelectedEmail] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const fetchMails = async () => {
@@ -26,6 +27,7 @@ const ViewMail = () => {
       });
 
       setEmails(response.data);
+      setUnreadCount(response.data.filter((email) => !email.read).length);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch mails.");
     }
@@ -35,11 +37,27 @@ const ViewMail = () => {
     fetchMails();
   });
 
-  const toggleEmailBody = (emailId) => {
+  const toggleEmailBody = async (emailId) => {
     if (selectedEmail === emailId) {
       setSelectedEmail(null);
     } else {
       setSelectedEmail(emailId);
+      try {
+        const token = localStorage.getItem("authToken");
+        await axios.put(
+          `http://localhost:5000/api/markAsRead/${emailId}`,
+          {},
+          {
+            headers: {
+              "x-auth-token": token,
+            },
+          }
+        );
+
+        setUnreadCount(unreadCount - 1);
+      } catch (err) {
+        console.error("Error marking email as read", err);
+      }
     }
   };
 
@@ -57,7 +75,7 @@ const ViewMail = () => {
         <Button variant="primary" className="mb-3" onClick={handleCompose}>
           Compose
         </Button>
-
+        <h5>Total Unread Mails: {unreadCount}</h5>
         {emails.length === 0 ? (
           <Alert variant="info">You have no received mails.</Alert>
         ) : (
@@ -66,13 +84,18 @@ const ViewMail = () => {
               <ListGroup.Item
                 key={email._id}
                 onClick={() => toggleEmailBody(email._id)}
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  backgroundColor: email.read ? "transparent" : "#f0f8ff",
+                }}
               >
+                {email.read ? null : (
+                  <span style={{ color: "blue", marginRight: "10px" }}>•</span>
+                )}{" "}
                 <h5>{email.subject}</h5>
                 <p>
                   <strong>From:</strong> {email.from}
                 </p>
-
                 {selectedEmail === email._id && (
                   <p>
                     <strong>Body:</strong> {email.body}

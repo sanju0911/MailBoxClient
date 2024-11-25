@@ -43,7 +43,29 @@ const viewMail = async (req, res) => {
   }
 };
 
+const markAsRead = async (req, res) => {
+  try {
+    const { emailId } = req.params;
+    const userEmail = req.user.email;
+
+    const email = await Email.findOne({ _id: emailId, to: userEmail });
+
+    if (!email) {
+      return res.status(404).json({ message: "Email not found." });
+    }
+
+    email.read = true;
+    await email.save();
+
+    return res.status(200).json({ message: "Email marked as read." });
+  } catch (error) {
+    console.error("Error marking email as read:", error);
+    return res.status(500).json({ message: "Failed to mark email as read." });
+  }
+};
+
 module.exports = {
   sendMail,
   viewMail,
+  markAsRead,
 };
